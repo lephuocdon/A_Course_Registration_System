@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<cstring>
+#include<string>
 #include<time.h>
 using namespace std;
 struct Date
@@ -53,6 +54,11 @@ struct Node
 	Student info;
 	Node* pNext;
 };
+struct List_Course
+{
+	CourseInfo* Head;
+	CourseInfo* Tail;
+};
 struct List
 {
 	Node* pHead;
@@ -69,3 +75,6 @@ struct Class
 	int numberStudents;
 	List classStudents;
 };
+void CreateList(List_Course l);
+Course* CreateNode_Course(CourseInfo x);
+void registration_session(List_Course l);
