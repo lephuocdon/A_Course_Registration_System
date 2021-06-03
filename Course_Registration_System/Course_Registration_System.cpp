@@ -1,4 +1,4 @@
-﻿#include"Manager.h"
+﻿#include"Course_Registration_System.h"
 using namespace std;
 Course* CreateNode_Course(CourseInfo x)
 {
@@ -10,7 +10,7 @@ Course* CreateNode_Course(CourseInfo x)
 	}
 	//strcpy(p->courseID, x.courseID);
 	p->info = x;
-	p->info.Next = NULL;
+	p->info.Next = NULL;  
 	return p;
 }
 //Khởi tạo danh sách của khoá học

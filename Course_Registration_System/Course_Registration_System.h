@@ -15,6 +15,13 @@ struct Session
 	string day;			//Mon, Tue, Wed, Thu, Fri, Sat
 	string period;		//S1, S2, S3, S4
 };
+struct Mark
+{
+	double midtermMark;
+	double finalMark;
+	double otherMark;
+	//Total Mark, GPA will be calculated by program (Code)
+};
 struct CourseInfo
 {
 	string courseID;
@@ -23,51 +30,45 @@ struct CourseInfo
 	int credits;
 	int maxStudents = 50;
 	Session lession1, lession2;			//A course has 2 lession
-	CourseInfo* Next;
+	Mark mark;
+	CourseInfo* cNext;
 };
-struct Staff
+struct NodeCourse
 {
-	string userName;
-	string password;
-	string staffName;
-	int gender;
-	Date dob;
-	string qualif;
+	string SchoolYear;
+	int Semester;
+	CourseInfo* info;
+	NodeCourse* pNext;
+};
+struct ListCourse
+{
+	NodeCourse* pHead;
+	NodeCourse* pTail;
 };
 struct Student
 {
 	//Add by file
-	int No;
+	int no;
 	string studentID;
 	string firstName;
 	string lastName;
-	string gender;
+	int gender;
 	Date dob;
 	string socialID;
 
-	//Student After Registration
+	//Add After Registration
 	string _class;
-	CourseInfo* _pHead;
+	ListCourse _course;
 };
 struct Node
 {
 	Student info;
 	Node* pNext;
 };
-struct List_Course
-{
-	CourseInfo* Head;
-	CourseInfo* Tail;
-};
 struct List
 {
 	Node* pHead;
 	Node* pTail;
-};
-struct Course
-{
-	CourseInfo info;
-	List courseStudents;
 };
 struct Class
 {
@@ -75,6 +76,15 @@ struct Class
 	int numberStudents;
 	List classStudents;
 };
-void CreateList(List_Course l);
-Course* CreateNode_Course(CourseInfo x);
-void registration_session(List_Course l);
+struct Staff
+{
+	string username;
+	string password;
+	string staffName;
+	int gender;
+	Date dob;
+	string qualif;
+};
+void saveFile(string cl);
+Student loadFile(string cl, string id)
+
