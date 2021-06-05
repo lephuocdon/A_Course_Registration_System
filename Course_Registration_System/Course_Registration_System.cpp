@@ -1,5 +1,6 @@
 ﻿#include"Course_Registration_System.h"
 using namespace std;
+//Khởi tạo 1 NodeCourse
 NodeCourse* CreateNode_Course(CourseInfo x)
 {
 	NodeCourse* p = new NodeCourse;
@@ -22,7 +23,19 @@ NodeCourse* CreateNode_Course(CourseInfo x)
 		return p;
 	}
 }
-
+//Thêm vào cuối ListCourse
+void addTail_Course(ListCourse& l, NodeCourse* p)
+{
+	if (l.pHead == NULL)
+	{
+		l.pHead = l.pTail = p;
+	}
+	else
+	{
+		l.pTail->pNext = p;
+		l.pTail = p;
+	}
+}
 //Khởi tạo danh sách của khoá học
 void CreateList_Course(ListCourse l)
 {
@@ -72,6 +85,59 @@ Student loadFile(string cl, string id)
 	}
 }
 //Đăng ký môn 
+void Doc_Ngay_DKHP(ifstream& filein, Date &dateBegin, Date &dateEnd)
+{
+	filein >> dateBegin.dd;
+	filein.seekg(1, 1); 
+	filein >> dateBegin.mm;
+	filein.seekg(1, 1);
+	filein >> dateEnd.dd;
+	filein.seekg(1, 1);
+	filein >> dateEnd.mm;
+}
+void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo& course_info)
+{
+	getline(filein, course_info.courseID, ',');
+	filein.seekg(1, 1);
+	getline(filein, course_info.courseName, ',');
+	filein.seekg(1, 1);
+	filein >> course_info.credits;
+	filein.seekg(1, 1);
+	getline(filein, course_info.lession1.day, '-');
+	filein.seekg(1, 1);
+	getline(filein, course_info.lession1.period, ',');
+	filein.seekg(1, 1);
+	getline(filein, course_info.lession2.day, '-');
+	filein.seekg(1, 1);
+	getline(filein, course_info.lession2.period, ',');
+	filein.seekg(1, 1);
+	getline(filein, course_info.teacherName);
+	string temp;
+	getline(filein, temp);
+}
+void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
+{
+	cin.ignore(12);
+	while (!filein.eof())
+	{
+		//Đọc thông tin Môn
+		CourseInfo course_info;
+		Doc_Thong_Tin_1_Mon(filein,course_info);
+		//Khởi tạo 1 NodeCourse
+		NodeCourse* p = CreateNode_Course(course_info);
+		//Thêm Môn vào Danh sách Môn
+		addTail_Course(l, p);
+	}
+}
+void Xuat_Danh_Sach_Mon(ifstream &filein, ListCourse l)
+{
+	Date dateBegin, dateEnd;
+	Doc_Ngay_DKHP(filein, dateBegin, dateEnd);
+	cout << "Date Begin: " << dateBegin.dd << "/" << dateBegin.mm << endl;
+	cout << "Date End  : " << dateEnd.dd << "/" << dateEnd.mm << endl << endl;
+	cout << "-----------------------------------List of Courses-----------------------------------" << endl;
+
+}
 void Enroll_Course()
 {
 	//Xuất danh sách môn ra màn hình
