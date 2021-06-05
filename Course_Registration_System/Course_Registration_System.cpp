@@ -42,12 +42,12 @@ void CreateList_Course(ListCourse l)
 	l.pHead = NULL;
 	l.pTail = NULL;
 }
-void saveFile(string cl)
+/*void saveFile(string cl)
 {
 	ofstream outfile(cl + ".txt", ofstream::binary);
 	outfile.write((char*)STUDENTS, sizeof(STUDENTS));
 	outfile.close();
-}
+}*/
 int findClass(string username, string password, string &cl)
 {
 	string user, pass, class_name;
@@ -69,7 +69,7 @@ int findClass(string username, string password, string &cl)
 		}
 	}
 }
-Student loadFile(string cl, string id)
+/*Student loadFile(string cl, string id)
 {
 	int numberOfStudents = 0;
 	ifstream infile(cl + ".txt", ifstream::binary);
@@ -83,7 +83,7 @@ Student loadFile(string cl, string id)
 			return STUDENTS[i];
 		}
 	}
-}
+}*/
 //Đăng ký môn 
 void Doc_Ngay_DKHP(ifstream& filein, Date &dateBegin, Date &dateEnd)
 {
@@ -117,6 +117,7 @@ void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo& course_info)
 }
 void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 {
+	CreateList_Course(l);
 	cin.ignore(12);
 	while (!filein.eof())
 	{
@@ -129,19 +130,78 @@ void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 		addTail_Course(l, p);
 	}
 }
-void Xuat_Danh_Sach_Mon(ifstream &filein, ListCourse l)
+void Xuat_Mon(CourseInfo c)
+{
+	cout << left << setw(13) << c.courseID << setw(26) << c.courseName << setw(12) << c.credits;
+	cout << left << setw(14) << c.lession1.day << "-" << c.lession1.period;
+	cout << left << setw(13) << c.lession2.day << "-" << c.lession2.period << setw(25) << c.teacherName << endl;
+}
+void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l)
 {
 	Date dateBegin, dateEnd;
+	int dem = 1;
+	Doc_Danh_Sach_Mon(filein, l);
 	Doc_Ngay_DKHP(filein, dateBegin, dateEnd);
 	cout << "Date Begin: " << dateBegin.dd << "/" << dateBegin.mm << endl;
 	cout << "Date End  : " << dateEnd.dd << "/" << dateEnd.mm << endl << endl;
 	cout << "-----------------------------------List of Courses-----------------------------------" << endl;
+	cout << left << setw(13) << "Course ID" << setw(26) << "Course Name" << setw(12) << "Credits";
+	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
+	for (NodeCourse* k = l.pHead;k != NULL;k=k->pNext)
+	{
+		cout << left << setw(13) << k->info->courseID << setw(26) << k->info->courseName << setw(12) << k->info->credits;
+		cout << left << setw(14) << k->info->lession1.day << "-" << k->info->lession1.period;
+		cout << left << setw(13) << k->info->lession2.day << "-" << k->info->lession2.period << setw(25) << k->info->teacherName << endl;
+	}
 
+}
+//Hàm kiểm tra xem số Courses mà Student đăng ký đã vượt quá 5 chưa
+//Hàm trả về courseName dựa vào courseID nhập từ bàn phím
+string Search_courseName(ListCourse l, string& course_ID)
+{
+	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+	{
+		if (k->info->courseID == course_ID);
+		return k->info->courseName;
+	}
+}
+//Hàm đếm số lượng sinh viên có trong 1 Course
+int numberOfStudent_in_Course(string course_name)
+{
+	int numberOfStudents = 0;
+	char c;
+	ifstream infile;
+	infile.open("2020-2021\\2\\" + course_name + ".csv", ios::in);
+	infile.get(c);
+	while (infile)
+	{
+		if (c = '\n')
+		{
+			numberOfStudents++;
+		}
+	}
+	return numberOfStudents;
 }
 void Enroll_Course()
 {
-	//Xuất danh sách môn ra màn hình
-
+	ListCourse l;
+	ifstream filein;
+	NodeCourse* p = new NodeCourse;
+	filein.open("2020-2021\\2\\ListCourse.csv", ios::in);
+	Xuat_Danh_Sach_Mon(filein, l);
+	filein.close();
+	string s;
+	cout << "Enter your Course ID you want to Enroll: ";
+	getline(cin, s);
+	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+	{
+		if (k->info->courseID == s)
+		{
+			p = k;
+		}
+	}
+	//Nếu nhập đúng => kiểm tra số lượng sinh viên hiện tại của môn và kiểm tra xem tối đa 5 môn chưa
+	//Nhập sai: nhập lại
 }
 //View list môn đã đăng ký
 

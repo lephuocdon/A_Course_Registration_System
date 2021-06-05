@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<cstring>
+#include<iomanip>
 #include<string>
 #include<time.h>
 using namespace std;
@@ -85,6 +86,17 @@ struct Staff
 	Date dob;
 	string qualif;
 };
+NodeCourse* CreateNode_Course(CourseInfo x);
+void addTail_Course(ListCourse& l, NodeCourse* p);
+void CreateList_Course(ListCourse l);
 void saveFile(string cl);
-Student loadFile(string cl, string id)
+Student loadFile(string cl, string id);
+int findClass(string username, string password, string& cl);
+void Doc_Ngay_DKHP(ifstream& filein, Date& dateBegin, Date& dateEnd);
+void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo& course_info);
+void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l);
+void Xuat_Mon(CourseInfo c);
+void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l);
+void Enroll_Course();
+
 
