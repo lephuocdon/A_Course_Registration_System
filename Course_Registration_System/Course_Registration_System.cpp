@@ -23,8 +23,8 @@ NodeCourse* CreateNode_Course(CourseInfo x)
 		return p;
 	}
 }
-//Thêm vào cuối ListCourse
-void addTail_Course(ListCourse& l, NodeCourse* p)
+//Thêm Node vào ListCourse
+void addCourse(ListCourse& l, NodeCourse* p)
 {
 	if (l.pHead == NULL)
 	{
@@ -37,6 +37,67 @@ void addTail_Course(ListCourse& l, NodeCourse* p)
 	}
 }
 //Khởi tạo danh sách của khoá học
+void removeHead(ListCourse& l)
+{
+	if (l.pHead == NULL)
+	{
+		cout << "Nothing to do ! ";
+	}
+	else
+	{
+		NodeCourse* temp = l.pHead;
+		l.pHead = l.pHead->pNext;
+		delete temp;
+	}
+}
+void removeCourse(ListCourse& l, string id)
+{
+	NodeCourse* pDel = l.pHead; // tạo một node pDel để xóa
+  //Nếu pDel == Null thì danh sách rỗng
+	if (pDel == NULL) {
+		cout << "List is empty!!";
+	}
+	//ngược lại thì xét điều kiện
+	else {
+		NodeCourse* pPre = NULL;
+		//dùng vòng lặp while để tìm ra pDel và pPre (vị trí đứng trước pDel)
+		while (pDel != NULL) {
+			if (pDel->info->courseID == id) {
+				break;
+			}
+			pPre = pDel;
+			pDel = pDel->pNext;
+		}
+		//Nếu pDel == null tức là không tìm thấy số cần xóa
+		if (pDel == NULL) {
+			cout << "Don't find!!";
+		}
+		// Ngược lại tiếp tục xét điều kiện
+		else {
+			// Nếu pDel == l.pHead, tức là node cần xóa ở đầu danh sách
+			if (pDel == l.pHead) {
+				l.pHead = l.pHead->pNext;
+				pDel->pNext = NULL;
+				delete pDel;
+				//pDel = NULL;
+			}
+			//Nếu pDel == l.pTail, tức là node cần xóa ở cuối danh sách
+			else if (pDel->pNext == NULL) {
+				l.pTail = pPre;
+				pPre->pNext = NULL;
+				delete pDel;
+				//pDel = NULL;
+			}
+			// và trường hợp cuối cùng số muốn xóa nằm ở giữa danh sách
+			else {
+				pPre->pNext = pDel->pNext;
+				pDel->pNext = NULL;
+				delete pDel;
+				//pDel = NULL;
+			}
+		}
+	}
+}
 void CreateList_Course(ListCourse l)
 {
 	l.pHead = NULL;
@@ -127,7 +188,7 @@ void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 		//Khởi tạo 1 NodeCourse
 		NodeCourse* p = CreateNode_Course(course_info);
 		//Thêm Môn vào Danh sách Môn
-		addTail_Course(l, p);
+		addCourse(l, p);
 	}
 }
 void Xuat_Mon(CourseInfo c)
@@ -182,7 +243,7 @@ int numberOfStudent_in_Course(string course_name)
 	}
 	return numberOfStudents;
 }
-void Enroll_Course()
+void Enroll_Course(ListCourse& l2)
 {
 	ListCourse l;
 	ifstream filein;
@@ -200,6 +261,7 @@ void Enroll_Course()
 			p = k;
 		}
 	}
+	addCourse(l2, p); 
 	//Nếu nhập đúng => kiểm tra số lượng sinh viên hiện tại của môn và kiểm tra xem tối đa 5 môn chưa
 	//Nhập sai: nhập lại
 }
