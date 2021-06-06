@@ -191,11 +191,11 @@ void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 		addCourse(l, p);
 	}
 }
-void Xuat_Mon(CourseInfo c)
+void Xuat_Mon(NodeCourse* k)
 {
-	cout << left << setw(13) << c.courseID << setw(26) << c.courseName << setw(12) << c.credits;
-	cout << left << setw(14) << c.lession1.day << "-" << c.lession1.period;
-	cout << left << setw(13) << c.lession2.day << "-" << c.lession2.period << setw(25) << c.teacherName << endl;
+	cout << left << setw(13) << k->info->courseID << setw(26) << k->info->courseName << setw(12) << k->info->credits;
+	cout << left << setw(14) << k->info->lession1.day << "-" << k->info->lession1.period;
+	cout << left << setw(13) << k->info->lession2.day << "-" << k->info->lession2.period << setw(25) << k->info->teacherName << endl;
 }
 void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l)
 {
@@ -210,9 +210,7 @@ void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l)
 	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
 	for (NodeCourse* k = l.pHead;k != NULL;k=k->pNext)
 	{
-		cout << left << setw(13) << k->info->courseID << setw(26) << k->info->courseName << setw(12) << k->info->credits;
-		cout << left << setw(14) << k->info->lession1.day << "-" << k->info->lession1.period;
-		cout << left << setw(13) << k->info->lession2.day << "-" << k->info->lession2.period << setw(25) << k->info->teacherName << endl;
+		Xuat_Mon(k);
 	}
 
 }
@@ -266,7 +264,15 @@ void Enroll_Course(ListCourse& l2)
 	//Nhập sai: nhập lại
 }
 //View list môn đã đăng ký
-
+void View_List(ListCourse l)
+{
+	cout << left << setw(13) << "Course ID" << setw(26) << "Course Name" << setw(12) << "Credits";
+	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
+	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+	{
+		Xuat_Mon(k);
+	}
+}
 //Huỷ môn đã đăng ký
 
 //View bảng điểmm
