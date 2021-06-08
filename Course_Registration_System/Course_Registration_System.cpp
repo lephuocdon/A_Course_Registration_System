@@ -256,30 +256,41 @@ int Count_course_in_List(ListCourse l2)
 	}
 	return dem;
 }
-void Enroll_Course(ListCourse& l2)
+void Enroll_Course(ListCourse l, ListCourse& l2)
 {
-	ListCourse l;
 	ifstream filein;
+	int check;
+	char c;
 	//NodeCourse* p = new NodeCourse;
 	filein.open("2020-2021\\2\\ListCourse.csv", ios::in);
 	Xuat_Danh_Sach_Mon(filein, l);
 	filein.close();
 	string s;
-	cout << "Enter your Course ID you want to Enroll: ";
-	getline(cin, s);
-	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+	do
 	{
-		//Kiểm tra điều kiện đăng ký học phần có thoả mãn hay không
-		if ((k->info->courseID == s) && (numberOfStudent_in_Course(k->info->courseName) < 50) && (checkLession(k,l2)) && (Count_course_in_List(l2) < 5))
+		do
 		{
-			NodeCourse* p = CreateNode_Course(k->info);
-			addCourse(l2, p);
-			break;
-		}
+			check = 0;
+			cout << "Enter your Course ID you want to Enroll: ";
+			getline(cin, s);
+			for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+			{
+				//Kiểm tra điều kiện đăng ký học phần có thoả mãn hay không
+				if ((k->info->courseID == s) && (numberOfStudent_in_Course(k->info->courseName) < 50) && (checkLession(k, l2)) && (Count_course_in_List(l2) < 5))
+				{
+					NodeCourse* p = CreateNode_Course(k->info);
+					addCourse(l2, p);
+					check++;
+					cout << "Enroll Success !!" << endl;
+					cout << "Do you want to continue Enrollment: (Yes: y/Y or No:n/N) ";
+					cin >> c;
+					break;
+				}
+			}
+			if (check == 0) cout << "Input again !!" << endl;
+		} while (check == 0);
 	}
-
-	//Nếu nhập đúng => kiểm tra số lượng sinh viên hiện tại của môn và kiểm tra xem tối đa 5 môn chưa
-	//Nhập sai: nhập lại
+	while ( c=='y' || c == 'Y');
 }
 //View list môn đã đăng ký
 void View_List(ListCourse l)
