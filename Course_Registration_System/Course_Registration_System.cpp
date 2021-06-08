@@ -21,7 +21,8 @@ void addCourse(ListCourse& l, NodeCourse* p)
 {
 	if (l.pHead == NULL)
 	{
-		l.pHead = l.pTail = p;
+		l.pHead = p;
+		l.pTail = p;
 	}
 	else
 	{
@@ -287,7 +288,7 @@ void Enroll_Course(ListCourse l, ListCourse& l2)
 					break;
 				}
 			}
-			if (check == 0) cout << "Input again !!" << endl;
+			if (check == 0) cout << "Failed. Input again !!" << endl;
 		} while (check == 0);
 	}
 	while ( c=='y' || c == 'Y');
@@ -307,8 +308,28 @@ void Remove_a_Course_from_the_enrolled_List(ListCourse& l)
 {
 	View_List(l);
 	string id;
-	cout << "Enter your Course ID you want to Remove: ";
-	getline(cin, id);
+	int check = 0;
+	do
+	{ 
+		cout << "Enter your Course ID you want to Remove: ";
+		getline(cin, id);
+		for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+		{
+			if (k->info->courseID == id)
+			{
+				check++;
+			}
+		}
+		if (check == 0)
+		{
+			cout << "Failed. Input again !!" << endl;
+		}
+		else
+		{
+			remove_NodeCourse(l, id);
+			View_List(l);
+		}
+	} while (check == 0);
 
 }
 //View bảng điểmm
