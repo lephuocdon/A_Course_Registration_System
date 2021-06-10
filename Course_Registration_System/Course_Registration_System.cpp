@@ -1,17 +1,96 @@
-﻿#include"Course_Registration_System.h"
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<string>
+#include<iomanip>
+#include<fstream>
 using namespace std;
-//Khởi tạo 1 NodeCourse
+struct Date
+{
+	int dd;
+	int mm;
+	int yy;
+};
+struct Session
+{
+	string day;			//Mon, Tue, Wed, Thu, Fri, Sat
+	string period;		//S1, S2, S3, S4
+};
+struct Mark
+{
+	double midtermMark;
+	double finalMark;
+	double otherMark;
+	//Total Mark, GPA will be calculated by program (Code)
+};
+struct CourseInfo
+{
+	string courseID;
+	string courseName;
+	string teacherName;
+	int credits;
+	int maxStudents = 50;
+	Session lession1, lession2;			//A course has 2 lession
+	Mark mark;
+	CourseInfo* cNext;
+};
+struct NodeCourse
+{
+	string SchoolYear;
+	int Semester;
+	CourseInfo* info;
+	NodeCourse* pNext;
+};
+struct ListCourse
+{
+	NodeCourse* pHead;
+	NodeCourse* pTail;
+};
+struct Student
+{
+	//Add by file
+	int no;
+	string studentID;
+	string firstName;
+	string lastName;
+	int gender;
+	Date dob;
+	string socialID;
+	double gpa[3];
+
+	//Add After Registration
+	string _class;
+	ListCourse _course;
+};
+struct Node
+{
+	Student info;
+	Node* pNext;
+};
+struct List
+{
+	Node* pHead;
+	Node* pTail;
+};
+struct Class
+{
+	string className;
+	int numberStudents;
+	List classStudents;
+};
+struct Staff
+{
+	string username;
+	string password;
+	string staffName;
+	int gender;
+	Date dob;
+	string qualif;
+};
+//Local Variable
+Student STUDENTS[50];
 NodeCourse* CreateNode_Course(CourseInfo* x)
 {
 	NodeCourse* p = new NodeCourse;
-	/*p->info->courseID = x.courseID;
-	p->info->courseName = x.courseName;
-	p->info->credits = x.credits;
-	p->info->lession1 = x.lession1;
-	p->info->lession2 = x.lession2;
-	p->info->mark = x.mark;
-	p->info->maxStudents = x.maxStudents;
-	p->info->teacherName = x.teacherName;*/
 	p->info = x;
 	p->pNext = NULL;
 	return p;
@@ -28,20 +107,6 @@ void addCourse(ListCourse& l, NodeCourse* p)
 	{
 		l.pTail->pNext = p;
 		l.pTail = p;
-	}
-}
-//Khởi tạo danh sách của khoá học
-void removeHead(ListCourse& l)
-{
-	if (l.pHead == NULL)
-	{
-		cout << "Nothing to do ! ";
-	}
-	else
-	{
-		NodeCourse* temp = l.pHead;
-		l.pHead = l.pHead->pNext;
-		delete temp;
 	}
 }
 // Hàm xoá 1 NodeCourse có id trùng với id nhập vào
@@ -93,42 +158,22 @@ void remove_NodeCourse(ListCourse& l, string id)
 		}
 	}
 }
-void CreateList_Course(ListCourse l)
+//Khởi tạo danh sách của khoá học
+void CreateList_Course(ListCourse& l)
 {
 	l.pHead = NULL;
 	l.pTail = NULL;
 }
-/*void saveFile(string cl)
+void saveFile(string cl)
 {
-	ofstream outfile(cl + ".txt", ofstream::binary);
+	ofstream outfile("Class/" + cl + "_Mark.txt", ofstream::binary);
 	outfile.write((char*)STUDENTS, sizeof(STUDENTS));
 	outfile.close();
-}*/
-int findClass(string username, string password, string &cl)
-{
-	string user, pass, class_name;
-	ifstream fstu("StudentAccount.txt");
-	if (!fstu.is_open())
-	{
-		cout << " Failed to open file StudentAccount.txt";
-		return 0;
-	}
-	while (!fstu.eof())
-	{
-		getline(fstu, user, ',');
-		getline(fstu, pass, ',');
-		getline(fstu, class_name);
-		if (user == username && pass == password)
-		{
-			cl = class_name;
-			return 1;
-		}
-	}
 }
-/*Student loadFile(string cl, string id)
+Student loadFile(string cl, string id)
 {
 	int numberOfStudents = 0;
-	ifstream infile(cl + ".txt", ifstream::binary);
+	ifstream infile("Class/" + cl + "_Mark.txt", ifstream::binary);
 	infile.seekg(0);
 	infile.read((char*)STUDENTS, sizeof(STUDENTS));
 	infile.close();
@@ -139,47 +184,46 @@ int findClass(string username, string password, string &cl)
 			return STUDENTS[i];
 		}
 	}
-}*/
-//Đăng ký môn 
-void Doc_Ngay_DKHP(ifstream& filein, Date &dateBegin, Date &dateEnd)
+}
+void Doc_Ngay_DKHP(ifstream& filein, Date& dateBegin, Date& dateEnd)
 {
 	filein >> dateBegin.dd;
-	filein.seekg(1, 1); 
+	filein.seekg(1, 1);
 	filein >> dateBegin.mm;
 	filein.seekg(1, 1);
 	filein >> dateEnd.dd;
 	filein.seekg(1, 1);
 	filein >> dateEnd.mm;
+	string s;
+	getline(filein, s);
 }
 void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo*& course_info)
 {
 	getline(filein, course_info->courseID, ',');
-	filein.seekg(1, 1);
+	//filein.seekg(1, 1);
 	getline(filein, course_info->courseName, ',');
-	filein.seekg(1, 1);
+	//filein.seekg(1, 1);
 	filein >> course_info->credits;
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession1.day, '-');
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession1.period, ',');
-	filein.seekg(1, 1);
+	//	filein.seekg(1, 1);
 	getline(filein, course_info->lession2.day, '-');
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession2.period, ',');
-	filein.seekg(1, 1);
+	//	filein.seekg(1, 1);
 	getline(filein, course_info->teacherName);
-	string temp;
-	getline(filein, temp);
+	//string temp;
+	//getline(filein, temp);
 }
 void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 {
-	CreateList_Course(l);
-	cin.ignore(12);
 	while (!filein.eof())
 	{
 		//Đọc thông tin Môn
-		CourseInfo* course_info;
-		Doc_Thong_Tin_1_Mon(filein,course_info);
+		CourseInfo* course_info = new CourseInfo;
+		Doc_Thong_Tin_1_Mon(filein, course_info);
 		//Khởi tạo 1 NodeCourse
 		NodeCourse* p = CreateNode_Course(course_info);
 		//Thêm Môn vào Danh sách Môn
@@ -188,38 +232,27 @@ void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 }
 void Xuat_Mon(NodeCourse* k)
 {
-	cout << left << setw(13) << k->info->courseID << setw(26) << k->info->courseName << setw(12) << k->info->credits;
-	cout << left << setw(14) << k->info->lession1.day << "-" << k->info->lession1.period;
-	cout << left << setw(13) << k->info->lession2.day << "-" << k->info->lession2.period << setw(25) << k->info->teacherName << endl;
+	cout << left << setw(14) << k->info->courseID << setw(36) << k->info->courseName << setw(12) << k->info->credits;
+	cout << left << k->info->lession1.day << "-" << setw(10) << k->info->lession1.period;
+	cout << k->info->lession2.day << "-" << setw(9) << k->info->lession2.period << setw(20) << k->info->teacherName << endl;
 }
-void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l)
+void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 {
 	Date dateBegin, dateEnd;
 	int dem = 1;
-	Doc_Danh_Sach_Mon(filein, l);
 	Doc_Ngay_DKHP(filein, dateBegin, dateEnd);
+	Doc_Danh_Sach_Mon(filein, l);
 	cout << "Date Begin: " << dateBegin.dd << "/" << dateBegin.mm << endl;
 	cout << "Date End  : " << dateEnd.dd << "/" << dateEnd.mm << endl << endl;
 	cout << "-----------------------------------List of Courses-----------------------------------" << endl;
-	cout << left << setw(13) << "Course ID" << setw(26) << "Course Name" << setw(12) << "Credits";
+	cout << left << setw(14) << "Course ID" << setw(36) << "Course Name" << setw(12) << "Credits";
 	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
-	for (NodeCourse* k = l.pHead;k != NULL;k=k->pNext)
+	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
 	{
 		Xuat_Mon(k);
 	}
 
 }
-//Hàm kiểm tra xem số Courses mà Student đăng ký đã vượt quá 5 chưa
-//Hàm trả về courseName dựa vào courseID nhập từ bàn phím
-string Search_courseName(ListCourse l, string& course_ID)
-{
-	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
-	{
-		if (k->info->courseID == course_ID);
-		return k->info->courseName;
-	}
-}
-//Hàm đếm số lượng sinh viên có trong 1 Course
 int numberOfStudent_in_Course(string course_name)
 {
 	int numberOfStudents = 0;
@@ -244,7 +277,7 @@ bool checkLession(NodeCourse* a, ListCourse l2)
 		if ((a->info->lession1.day == k->info->lession1.day && a->info->lession1.period == k->info->lession1.period) || (a->info->lession2.day == k->info->lession2.day && a->info->lession2.period == k->info->lession2.period))
 			return false;
 	}
-	return true; 
+	return true;
 }
 //Hàm đếm số môn trong List đăng ký
 int Count_course_in_List(ListCourse l2)
@@ -257,63 +290,103 @@ int Count_course_in_List(ListCourse l2)
 	}
 	return dem;
 }
-void Enroll_Course(ListCourse l, ListCourse& l2)
+// Đăng ký học phần
+void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, string SY, int& SE)
 {
-	ifstream filein;
 	int check;
 	char c;
-	//NodeCourse* p = new NodeCourse;
-	filein.open("2020-2021\\2\\ListCourse.csv", ios::in);
 	Xuat_Danh_Sach_Mon(filein, l);
-	filein.close();
-	string s;
 	do
 	{
-		do
+		string s;
+		check = 0;
+		cout << "Enter your Course ID you want to Enroll: ";
+		getline(cin, s);
+		for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
 		{
-			check = 0;
-			cout << "Enter your Course ID you want to Enroll: ";
-			getline(cin, s);
-			for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+			//Kiểm tra điều kiện đăng ký học phần có thoả mãn hay không
+			if ((k->info->courseID == s) && (numberOfStudent_in_Course(k->info->courseName) < k->info->maxStudents) && (checkLession(k, l2)))
 			{
-				//Kiểm tra điều kiện đăng ký học phần có thoả mãn hay không
-				if ((k->info->courseID == s) && (numberOfStudent_in_Course(k->info->courseName) < 50) && (checkLession(k, l2)) && (Count_course_in_List(l2) < 5))
+				if (Count_course_in_List(l2) < 5)
 				{
-					NodeCourse* p = CreateNode_Course(k->info);
-					addCourse(l2, p);
-					check++;
-					cout << "Enroll Success !!" << endl;
-					cout << "Do you want to continue Enrollment: (Yes: y/Y or No:n/N) ";
-					cin >> c;
-					break;
+					if (numberOfStudent_in_Course(k->info->courseName) < k->info->maxStudents)
+					{
+						if (checkLession(k, l2))
+						{
+							NodeCourse* p = CreateNode_Course(k->info);
+							addCourse(l2, p);
+							check++;
+							cout << "Enroll Success !!" << endl;
+							cout << "Do you want to continue Enrollment: (Yes: y/Y or No:n/N) ";
+							cin >> c;
+							cin.ignore();
+							break;
+						}
+						//Trùng lịch với môn đã đăng ký
+						else
+						{
+							cout << "Coincide with the registered coursev!!" << endl;
+							return;
+						}
+					}
+					//Lớp đã đầy (50/50)
+					else
+					{
+						cout << "Students in Course is FULL (50/50) !!" << endl;
+						return;
+					}
+				}
+				else
+				{
+					cout << "Sorry !! You were enrolled 05/05 Courses !!" << endl;
+					return;
 				}
 			}
-			if (check == 0) cout << "Failed. Input again !!" << endl;
-		} while (check == 0);
-	}
-	while ( c=='y' || c == 'Y');
-}
-//View list môn đã đăng ký
-void View_List(ListCourse l)
-{
-	cout << left << setw(13) << "Course ID" << setw(26) << "Course Name" << setw(12) << "Credits";
-	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
-	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+		}
+		if (check == 0) cout << "Failed. Input again !!" << endl;
+	} while (check == 0 || c == 'y' || c == 'Y');
+	NodeCourse* p1 = S._course.pHead;
+	while (p1->SchoolYear != SY && p1->Semester != SE)
 	{
-		Xuat_Mon(k);
+		p1 = p1->pNext;
+	}
+	NodeCourse* p2 = l2.pHead;
+	p1->info = p2->info;
+	while (p2->pNext != NULL)
+	{
+		p2 = p2->pNext;
+		p1->info->cNext = p2->info;
+		p1->info = p1->info->cNext;
+	}
+}
+// Xem danh sách môn đã đăng ký
+void viewListCourses(Student S, string SY, int SE)
+{
+	//Student
+	cout << setw(10) << "Course ID" << setw(40) << "Course Name" << setw(13) << "Credits" << setw(10) << "Session 1" << setw(10) << "Session 2" << setw(25) << "Teacher Name" << endl;
+	NodeCourse* p = S._course.pHead;
+	while (p->SchoolYear != SY && p->Semester != SE)
+	{
+		p = p->pNext;
+	}
+	CourseInfo* c = p->info;
+	while (c != NULL)
+	{
+		cout << setw(10) << c->courseID << setw(40) << c->courseName << setw(13) << c->credits << setw(10) << c->lession1.day + "-" + c->lession1.period << setw(10) << c->lession2.day + "-" + c->lession2.period << setw(25) << c->teacherName << endl;
+		c = c->cNext;
 	}
 }
 //Huỷ môn đã đăng ký
-void Remove_a_Course_from_the_enrolled_List(ListCourse& l)
+void Remove_a_Course_from_the_enrolled_List(Student& S, string SY, int SE)
 {
-	View_List(l);
-	string id;
+	viewListCourses(S, SY, SE);
 	int check = 0;
 	do
-	{ 
+	{
+		string id;
 		cout << "Enter your Course ID you want to Remove: ";
 		getline(cin, id);
-		for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
+		for (NodeCourse* k = S._course.pHead;k != NULL;k = k->pNext)
 		{
 			if (k->info->courseID == id)
 			{
@@ -322,14 +395,28 @@ void Remove_a_Course_from_the_enrolled_List(ListCourse& l)
 		}
 		if (check == 0)
 		{
-			cout << "Failed. Input again !!" << endl;
+			cout << "Remove failed. Again !!" << endl;
 		}
 		else
 		{
-			remove_NodeCourse(l, id);
-			View_List(l);
+			remove_NodeCourse(S._course, id);
+			viewListCourses(S, SY, SE);
 		}
 	} while (check == 0);
-
 }
-//View bảng điểmm
+/*void main()
+{
+	ListCourse l, l2;
+	Student S;
+	string SY;
+	int SE;
+	CourseInfo* p = new CourseInfo;
+	Date dateBegin, dateEnd;
+	CreateList_Course(l);
+	CreateList_Course(l2);
+	ifstream filein;
+	filein.open("ListCourse.csv", ios::in);
+	Enroll_Course(filein, l, l2, S, SY, SE);
+	filein.close();
+	system("pause");
+}*/

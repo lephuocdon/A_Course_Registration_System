@@ -56,6 +56,7 @@ struct Student
 	int gender;
 	Date dob;
 	string socialID;
+	double gpa[3];
 
 	//Add After Registration
 	string _class;
@@ -86,9 +87,10 @@ struct Staff
 	Date dob;
 	string qualif;
 };
+ListCourse l, l2;
 NodeCourse* CreateNode_Course(CourseInfo x);
 void addTail_Course(ListCourse& l, NodeCourse* p);
-void CreateList_Course(ListCourse l);
+void CreateList_Course(ListCourse& l);
 void saveFile(string cl);
 Student loadFile(string cl, string id);
 int findClass(string username, string password, string& cl);
@@ -97,6 +99,8 @@ void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo& course_info);
 void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l);
 void Xuat_Mon(CourseInfo c);
 void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse l);
-void Enroll_Course();
+void Enroll_Course(ifstream& filein, ListCourse l, ListCourse& l2);
+void View_List(ListCourse l);
+
 
 
