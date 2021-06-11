@@ -452,8 +452,10 @@ void Remove_a_Course_from_the_enrolled_List(Student& S, string SY, int SE)
 	filein.close();
 	system("pause");
 }*/
+//Student View ScoreBoard
 void view_ScoreBoard()
 {
+	//Student 
 	string id, cl;
 	Student S;
 	string sy, _sy = "" ,se;
