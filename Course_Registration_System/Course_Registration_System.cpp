@@ -95,7 +95,7 @@ NodeCourse* CreateNode_Course(CourseInfo* x)
 	p->pNext = NULL;
 	return p;
 }
-//Thêm Node vào ListCourse
+//Add Node in ListCourse
 void addCourse(ListCourse& l, NodeCourse* p)
 {
 	if (l.pHead == NULL)
@@ -109,18 +109,15 @@ void addCourse(ListCourse& l, NodeCourse* p)
 		l.pTail = p;
 	}
 }
-// Hàm xoá 1 NodeCourse có id trùng với id nhập vào
+//Delete 1 NodeCourse have ID what are conflicted with Input ID
 void remove_NodeCourse(ListCourse& l, string id)
 {
-	NodeCourse* pDel = l.pHead; // tạo một node pDel để xóa
-  //Nếu pDel == Null thì danh sách rỗng
+	NodeCourse* pDel = l.pHead; 
 	if (pDel == NULL) {
 		cout << "List is empty!!";
 	}
-	//ngược lại thì xét điều kiện
 	else {
 		NodeCourse* pPre = NULL;
-		//dùng vòng lặp while để tìm ra pDel và pPre (vị trí đứng trước pDel)
 		while (pDel != NULL) {
 			if (pDel->info->courseID == id) {
 				break;
@@ -128,37 +125,29 @@ void remove_NodeCourse(ListCourse& l, string id)
 			pPre = pDel;
 			pDel = pDel->pNext;
 		}
-		//Nếu pDel == null tức là không tìm thấy số cần xóa
 		if (pDel == NULL) {
 			cout << "Don't find!!";
 		}
-		// Ngược lại tiếp tục xét điều kiện
 		else {
-			// Nếu pDel == l.pHead, tức là node cần xóa ở đầu danh sách
 			if (pDel == l.pHead) {
 				l.pHead = l.pHead->pNext;
 				pDel->pNext = NULL;
 				delete pDel;
-				//pDel = NULL;
 			}
-			//Nếu pDel == l.pTail, tức là node cần xóa ở cuối danh sách
 			else if (pDel->pNext == NULL) {
 				l.pTail = pPre;
 				pPre->pNext = NULL;
 				delete pDel;
-				//pDel = NULL;
 			}
-			// và trường hợp cuối cùng số muốn xóa nằm ở giữa danh sách
 			else {
 				pPre->pNext = pDel->pNext;
 				pDel->pNext = NULL;
 				delete pDel;
-				//pDel = NULL;
 			}
 		}
 	}
 }
-//Khởi tạo danh sách của khoá học
+//Create ListCourse
 void CreateList_Course(ListCourse& l)
 {
 	l.pHead = NULL;
@@ -185,7 +174,8 @@ Student loadFile(string cl, string id)
 		}
 	}
 }
-void Doc_Ngay_DKHP(ifstream& filein, Date& dateBegin, Date& dateEnd)
+//Read course registration session
+void Read_Date(ifstream& filein, Date& dateBegin, Date& dateEnd)
 {
 	filein >> dateBegin.dd;
 	filein.seekg(1, 1);
@@ -197,51 +187,49 @@ void Doc_Ngay_DKHP(ifstream& filein, Date& dateBegin, Date& dateEnd)
 	string s;
 	getline(filein, s);
 }
-void Doc_Thong_Tin_1_Mon(ifstream& filein, CourseInfo*& course_info)
+//Read information of one course
+void Read_1_Course(ifstream& filein, CourseInfo*& course_info)
 {
 	getline(filein, course_info->courseID, ',');
-	//filein.seekg(1, 1);
 	getline(filein, course_info->courseName, ',');
-	//filein.seekg(1, 1);
 	filein >> course_info->credits;
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession1.day, '-');
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession1.period, ',');
-	//	filein.seekg(1, 1);
 	getline(filein, course_info->lession2.day, '-');
 	filein.seekg(1, 1);
 	getline(filein, course_info->lession2.period, ',');
-	//	filein.seekg(1, 1);
 	getline(filein, course_info->teacherName);
-	//string temp;
-	//getline(filein, temp);
 }
-void Doc_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
+//Read listcourse
+void Read_Courses(ifstream& filein, ListCourse& l)
 {
 	while (!filein.eof())
 	{
-		//Đọc thông tin Môn
+		//Read information of Course
 		CourseInfo* course_info = new CourseInfo;
-		Doc_Thong_Tin_1_Mon(filein, course_info);
-		//Khởi tạo 1 NodeCourse
+		Read_1_Course(filein, course_info);
+		//Create NodeCourse
 		NodeCourse* p = CreateNode_Course(course_info);
-		//Thêm Môn vào Danh sách Môn
+		//Add NodeCourse in ListCourse
 		addCourse(l, p);
 	}
 }
-void Xuat_Mon(NodeCourse* k)
+//Print information of one course
+void Print_1_course(NodeCourse* k)
 {
 	cout << left << setw(14) << k->info->courseID << setw(36) << k->info->courseName << setw(12) << k->info->credits;
 	cout << left << k->info->lession1.day << "-" << setw(10) << k->info->lession1.period;
 	cout << k->info->lession2.day << "-" << setw(9) << k->info->lession2.period << setw(20) << k->info->teacherName << endl;
 }
-void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
+//Print listcourse
+void Print_Courses(ifstream& filein, ListCourse& l)
 {
 	Date dateBegin, dateEnd;
 	int dem = 1;
-	Doc_Ngay_DKHP(filein, dateBegin, dateEnd);
-	Doc_Danh_Sach_Mon(filein, l);
+	Read_Date(filein, dateBegin, dateEnd);
+	Read_Courses(filein, l);
 	cout << "Date Begin: " << dateBegin.dd << "/" << dateBegin.mm << endl;
 	cout << "Date End  : " << dateEnd.dd << "/" << dateEnd.mm << endl << endl;
 	cout << "-----------------------------------List of Courses-----------------------------------" << endl;
@@ -249,7 +237,7 @@ void Xuat_Danh_Sach_Mon(ifstream& filein, ListCourse& l)
 	cout << left << setw(14) << "Lession 1" << setw(13) << "Lession 2" << setw(25) << "Teacher Name" << endl;
 	for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
 	{
-		Xuat_Mon(k);
+		Print_1_course(k);
 	}
 
 }
@@ -269,7 +257,7 @@ int numberOfStudent_in_Course(string course_name)
 	}
 	return numberOfStudents;
 }
-//Kiểm tra xem môn mới đăng ký có bị trùng tiết với môn đã đăng ký hay không
+//Check the new course are conflicted with existing enrolled course
 bool checkLession(NodeCourse* a, ListCourse l2)
 {
 	for (NodeCourse* k = l2.pHead;k != NULL;k = k->pNext)
@@ -279,7 +267,7 @@ bool checkLession(NodeCourse* a, ListCourse l2)
 	}
 	return true;
 }
-//Hàm đếm số môn trong List đăng ký
+//Count the number of courses in ListCourse
 int Count_course_in_List(ListCourse l2)
 {
 	int dem = 0;
@@ -322,12 +310,12 @@ string searchClass(string id)
 	}
 	f.close();
 }
-// Đăng ký học phần
+// Enroll in a course
 void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, string SY, int& SE)
 {
 	int check;
 	char c;
-	Xuat_Danh_Sach_Mon(filein, l);
+	Print_Courses(filein, l);
 	do
 	{
 		string s;
@@ -336,7 +324,7 @@ void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, 
 		getline(cin, s);
 		for (NodeCourse* k = l.pHead;k != NULL;k = k->pNext)
 		{
-			//Kiểm tra điều kiện đăng ký học phần có thoả mãn hay không
+			//Check 
 			if ((k->info->courseID == s) && (numberOfStudent_in_Course(k->info->courseName) < k->info->maxStudents) && (checkLession(k, l2)))
 			{
 				if (Count_course_in_List(l2) < 5)
@@ -354,14 +342,14 @@ void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, 
 							cin.ignore();
 							break;
 						}
-						//Trùng lịch với môn đã đăng ký
+						//Conflicted with the existing enrolled course
 						else
 						{
 							cout << "Coincide with the registered coursev!!" << endl;
 							return;
 						}
 					}
-					//Lớp đã đầy (50/50)
+					//Class full (50/50)
 					else
 					{
 						cout << "Students in Course is FULL (50/50) !!" << endl;
@@ -391,7 +379,7 @@ void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, 
 		p1->info = p1->info->cNext;
 	}
 }
-// Xem danh sách môn đã đăng ký
+// View list of enrolled courses
 void viewListCourses(Student S, string SY, int SE)
 {
 	//Student
@@ -408,7 +396,7 @@ void viewListCourses(Student S, string SY, int SE)
 		c = c->cNext;
 	}
 }
-//Huỷ môn đã đăng ký
+//Remove a course from the enrolled list.
 void Remove_a_Course_from_the_enrolled_List(Student& S, string SY, int SE)
 {
 	viewListCourses(S, SY, SE);
@@ -478,7 +466,7 @@ void view_ScoreBoard()
 	}
 	else
 	{
-		cout << "Semester: "; 
+		cout << "Semester: ";
 		getline(cin, se);
 		ifstream f(sy + "/" + se + "/ListCourse.csv");
 		if (!f.is_open())
@@ -513,4 +501,5 @@ void view_ScoreBoard()
 			}
 			cout << "GPA: " << S.gpa[atoi(se.c_str()) - 1] << endl;
 		}
+	}
 }
