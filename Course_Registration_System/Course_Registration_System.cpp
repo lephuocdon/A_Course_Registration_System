@@ -290,6 +290,38 @@ int Count_course_in_List(ListCourse l2)
 	}
 	return dem;
 }
+//Search Class from ID in file StudentAccount.txt
+string searchClass(string id)
+{
+	//Search Class from ID in file StudentAccount.txt
+	ifstream f("StudentAccount.txt");
+	string s; unsigned int pos1 = -1, pos2 = -1;
+	while (!f.eof())
+	{
+		getline(f, s, '\n');
+		for (unsigned int i = 0; i < s.length(); i++)
+		{
+			if (s[i] == ',')
+			{
+				if (pos1 == -1)
+				{
+					pos1 = i;
+				}
+				else
+				{
+					pos2 = i;
+					break;
+				}
+			}
+		}
+		if (id == s.substr(0, pos1))
+		{
+			return s.substr(pos2 + 1, s.length() - pos2 - 1);
+		}
+		pos1 = -1; pos2 = -1;
+	}
+	f.close();
+}
 // Đăng ký học phần
 void Enroll_Course(ifstream& filein, ListCourse& l, ListCourse& l2, Student& S, string SY, int& SE)
 {
@@ -420,3 +452,63 @@ void Remove_a_Course_from_the_enrolled_List(Student& S, string SY, int SE)
 	filein.close();
 	system("pause");
 }*/
+void view_ScoreBoard()
+{
+	string id, cl;
+	Student S;
+	string sy, _sy = "" ,se;
+	cout << "School Year (Ex: 2020-2021): "; 
+	getline(cin, sy);
+	ifstream f("ListSchoolYear.txt");
+	while (!f.eof())
+	{
+		getline(f, _sy, '\n');
+		if (_sy == sy)
+		{
+			break;
+		}
+		_sy = "";
+	}
+	f.close();
+	if (_sy == "")
+	{
+		cout << "This School Year doesn't exist!" << endl;
+	}
+	else
+	{
+		cout << "Semester: "; 
+		getline(cin, se);
+		ifstream f(sy + "/" + se + "/ListCourse.csv");
+		if (!f.is_open())
+		{
+			cout << "This Semester doesn't exist!" << endl;
+		}
+		else
+		{
+			cl = searchClass(id);
+			S = loadFile(cl, id);
+			cout << "------------------------------------------------ScoreBoard----------------------------------------------" << endl;
+			cout << left << setw(4) << "No" << setw(12) << "Course ID" << setw(33) << "Course Name" << setw(17) << "Midtream Mark" << setw(14) << "Final Mark" << setw(14) << "Other Mark" << setw(14) << "Total Mark" << endl;
+			NodeCourse* p = S._course.pHead;
+			while (p->SchoolYear != sy && p->Semester != atoi(se.c_str()));
+			{
+				p = p->pNext;
+			}
+			CourseInfo* c = p->info;
+			int count = 1;
+			while (c != NULL)
+			{
+				cout << left << setw(4) << count << setw(12) << c->courseID << setw(33) << c->courseName << setw(17) << setprecision(2) << c->mark.midtermMark << setw(14) << setprecision(2) << c->mark.finalMark << setw(14) << setprecision(2) << c->mark.otherMark;
+				if ((c->mark.midtermMark * 0.5 + c->mark.finalMark * 0.5 + c->mark.otherMark) > 10.00)
+				{
+					cout << setw(14) << "10.00" << endl;
+				}
+				else
+				{
+					cout << setw(14) << setprecision(2) << c->mark.midtermMark * 0.5 + c->mark.finalMark * 0.5 + c->mark.otherMark << endl;
+				}
+				c = c->cNext;
+			}
+			cout << "GPA: " << S.gpa[atoi(se.c_str()) - 1] << endl;
+		}
+}
